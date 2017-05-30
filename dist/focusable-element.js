@@ -1,3 +1,88 @@
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("jquery"));
+	else if(typeof define === 'function' && define.amd)
+		define(["jquery"], factory);
+	else if(typeof exports === 'object')
+		exports["Focusable"] = factory(require("jquery"));
+	else
+		root["Focusable"] = factory(root["jQuery"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 /*!
  * Focus element overlay (Focusable) v0.1
  * https://github.com/zzarcon/focusable
@@ -25,7 +110,7 @@
  * Date: 2014-11-18
  */
 
-var $ = require('jquery');
+var $ = __webpack_require__(2);
 
 var $columnWrapper = null;
 var $element = null;
@@ -53,11 +138,11 @@ function setup() {
  * @return {jQuery object} this
  */
 function createPlugin() {
-  if (!window.jQuery || !window.$ || !window.$.fn) {
+  if (!window.jQuery || !window.$ || !window.$.fn) {
     return;
   }
 
-  $.fn.focusable = function(options) {
+  $.fn.focusable = function (options) {
     Focusable.setFocus(this, options);
     return this;
   };
@@ -136,7 +221,10 @@ function createColumns(forceVisibility) {
 
 function createColumn(index) {
   var offset = $element.offset();
-  var top = 0, left = 0, width = px($element.outerWidth()), height = "100%";
+  var top = 0,
+      left = 0,
+      width = px($element.outerWidth()),
+      height = "100%";
   var styles = '';
 
   switch (index) {
@@ -153,7 +241,7 @@ function createColumn(index) {
       break;
     case 3:
       width = "100%";
-      left = px(($element.outerWidth() + offset.left));
+      left = px($element.outerWidth() + offset.left);
       break;
   }
 
@@ -165,17 +253,8 @@ function createColumn(index) {
  * Create an svg node that outputs a rectangle with a hole in center
  * @return {jQuery object}
  */
-function makeRectWithHole (width, height, radius) {
-   return $(
-    '<svg width=' + width + ' height=' + height + '>' +
-    '<defs>' +
-    '    <mask id="hole">' +
-    '        <rect width="100%" height="100%" fill="white"/>' +
-    '        <circle r="' + radius +  '" cx="' + (width/2) + '" cy="' +  (height/2) +'" />' +
-    '    </mask>' +
-    '</defs>' +
-    '<rect id="donut" style="fill:rgba(0,0,0,0.8);" width="' + width +'" height="' + height + '" mask="url(#hole)" />' +
-    '</svg>');
+function makeRectWithHole(width, height, radius) {
+  return $('<svg width=' + width + ' height=' + height + '>' + '<defs>' + '    <mask id="hole">' + '        <rect width="100%" height="100%" fill="white"/>' + '        <circle r="' + radius + '" cx="' + width / 2 + '" cy="' + height / 2 + '" />' + '    </mask>' + '</defs>' + '<rect id="donut" style="fill:rgba(0,0,0,0.8);" width="' + width + '" height="' + height + '" mask="url(#hole)" />' + '</svg>');
 };
 
 /**
@@ -184,7 +263,7 @@ function makeRectWithHole (width, height, radius) {
  */
 function createCircle() {
   var bcr = $element.get(0).getBoundingClientRect();
-  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width/2, bcr.height/2));
+  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width / 2, bcr.height / 2));
   circle.attr('class', columnClass);
   circle.css({
     left: bcr.left,
@@ -208,14 +287,14 @@ function px(value) {
  * @return {Void}
  */
 function addStylesheet() {
-  var sheet = (function() {
+  var sheet = function () {
     var style = document.createElement("style");
 
     style.appendChild(document.createTextNode(""));
     document.head.appendChild(style);
 
     return style.sheet;
-  })();
+  }();
 
   sheet.insertRule(columnSelector + "{ display:none; position: absolute; z-index: 9999; background: rgba(0,0,0,0.8); }", 0);
 }
@@ -244,3 +323,22 @@ module.exports = {
   getOptions: getOptions,
   isVisible: getVisibility
 };
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(0);
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ })
+/******/ ]);
+});
