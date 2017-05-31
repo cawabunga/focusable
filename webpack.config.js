@@ -27,6 +27,11 @@ module.exports = {
       test: /\.js/,
       exclude: /node_modules/,
       loader: 'babel-loader?presets[]=es2015'
+    }],
+    loaders: [{
+      test: /\.html/,
+      exclude: /node_modules/,
+      loader: 'raw-loader'
     }]
   }
 };

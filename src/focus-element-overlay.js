@@ -26,6 +26,7 @@
  */
 
 var $ = require('jquery');
+var template = require('./template.html');
 
 var $columnWrapper = null;
 var $element = null;
@@ -143,15 +144,7 @@ function createTable() {
     width: window.innerWidth
   };
 
-  var container = $(`<div class="lightbox-highlight">
-    <div class="lightbox-row"><div class="lightbox-cell"></div></div>
-    <div class="lightbox-row lightbox-opening-row">
-      <div class="lightbox-cell"></div>
-      <div class="lightbox-cell lightbox-opening"></div>
-      <div class="lightbox-cell"></div>
-    </div>
-    <div class="lightbox-row"><div class="lightbox-cell"></div></div>
-  </div>`);
+  var container = $(template);
 
   var topBlock = container.find('.lightbox-row:nth-of-type(1)');
   var middleBlock = container.find('.lightbox-row:nth-of-type(2)');

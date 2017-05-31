@@ -7,7 +7,7 @@
 		exports["Focusable"] = factory(require("jquery"));
 	else
 		root["Focusable"] = factory(root["jQuery"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -80,9 +80,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
 /*!
  * Focus element overlay (Focusable) v0.1
  * https://github.com/zzarcon/focusable
@@ -110,7 +107,8 @@ return /******/ (function(modules) { // webpackBootstrap
  * Date: 2014-11-18
  */
 
-var $ = __webpack_require__(2);
+var $ = __webpack_require__(3);
+var template = __webpack_require__(2);
 
 var $columnWrapper = null;
 var $element = null;
@@ -138,11 +136,11 @@ function setup() {
  * @return {jQuery object} this
  */
 function createPlugin() {
-  if (!window.jQuery || !window.$ || !window.$.fn) {
+  if (!window.jQuery || !window.$ || !window.$.fn) {
     return;
   }
 
-  $.fn.focusable = function (options) {
+  $.fn.focusable = function(options) {
     Focusable.setFocus(this, options);
     return this;
   };
@@ -228,7 +226,7 @@ function createTable() {
     width: window.innerWidth
   };
 
-  var container = $('<div class="lightbox-highlight">\n    <div class="lightbox-row"><div class="lightbox-cell"></div></div>\n    <div class="lightbox-row lightbox-opening-row">\n      <div class="lightbox-cell"></div>\n      <div class="lightbox-cell lightbox-opening"></div>\n      <div class="lightbox-cell"></div>\n    </div>\n    <div class="lightbox-row"><div class="lightbox-cell"></div></div>\n  </div>');
+  var container = $(template);
 
   var topBlock = container.find('.lightbox-row:nth-of-type(1)');
   var middleBlock = container.find('.lightbox-row:nth-of-type(2)');
@@ -240,15 +238,15 @@ function createTable() {
   var topBlockHeight = rectangle.top - options.padding;
   if (topBlockHeight <= 0) {
     topBlockHeight = 0;
-    container.css('top', -options.padding);
+    container.css('top', -options.padding)
   }
 
   var middleBlockHeight = rectangle.height + 2 * options.padding;
 
-  var bottomBlockHeight = windowDimensions.height - topBlockHeight - middleBlockHeight;
+  var bottomBlockHeight = windowDimensions.height - topBlockHeight - middleBlockHeight
   if (bottomBlockHeight <= 0) {
     bottomBlockHeight = 0;
-    container.css('bottom', -options.padding);
+    container.css('bottom', -options.padding)
   }
 
   var firstColumnWidth = rectangle.left - options.padding;
@@ -279,8 +277,17 @@ function createTable() {
  * Create an svg node that outputs a rectangle with a hole in center
  * @return {jQuery object}
  */
-function makeRectWithHole(width, height, radius) {
-  return $('<svg width=' + width + ' height=' + height + '>' + '<defs>' + '    <mask id="hole">' + '        <rect width="100%" height="100%" fill="white"/>' + '        <circle r="' + radius + '" cx="' + width / 2 + '" cy="' + height / 2 + '" />' + '    </mask>' + '</defs>' + '<rect id="donut" style="fill:rgba(0,0,0,0.4);" width="' + width + '" height="' + height + '" mask="url(#hole)" />' + '</svg>');
+function makeRectWithHole (width, height, radius) {
+   return $(
+    '<svg width=' + width + ' height=' + height + '>' +
+    '<defs>' +
+    '    <mask id="hole">' +
+    '        <rect width="100%" height="100%" fill="white"/>' +
+    '        <circle r="' + radius +  '" cx="' + (width/2) + '" cy="' +  (height/2) +'" />' +
+    '    </mask>' +
+    '</defs>' +
+    '<rect id="donut" style="fill:rgba(0,0,0,0.4);" width="' + width +'" height="' + height + '" mask="url(#hole)" />' +
+    '</svg>');
 };
 
 /**
@@ -289,7 +296,7 @@ function makeRectWithHole(width, height, radius) {
  */
 function createCircle() {
   var bcr = $element.get(0).getBoundingClientRect();
-  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width / 2, bcr.height / 2));
+  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width/2, bcr.height/2));
   circle.attr('class', containerClass);
   circle.css({
     left: bcr.left,
@@ -336,16 +343,19 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
 module.exports = __webpack_require__(0);
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+module.exports = "<div class=\"lightbox-highlight\">\n    <div class=\"lightbox-row\"><div class=\"lightbox-cell\"></div></div>\n    <div class=\"lightbox-row lightbox-opening-row\">\n      <div class=\"lightbox-cell\"></div>\n      <div class=\"lightbox-cell lightbox-opening\"></div>\n      <div class=\"lightbox-cell\"></div>\n    </div>\n    <div class=\"lightbox-row\"><div class=\"lightbox-cell\"></div></div>\n</div>"
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ })
 /******/ ]);
