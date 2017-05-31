@@ -206,25 +206,33 @@ function createColumns(forceVisibility) {
   var createdColumns = 0;
   isVisible = true;
   clearColumns();
-  createTable();
+
+  var lightboxElement = createTable();
+  $columnWrapper.append(lightboxElement);
 
   if (forceVisibility === true) {
     $(containerSelector).show();
   }
 }
 
-function createTable() {
-  var rectangle = $element[0].getBoundingClientRect();
-
-  var pageDimensions = {
+function getPageDimensions() {
+  return {
     height: document.body.scrollHeight,
     width: document.body.scrollWidth
   };
+}
 
-  var windowDimensions = {
+function getWindowDimensions() {
+  return {
     height: window.innerHeight,
     width: window.innerWidth
   };
+}
+
+function createTable() {
+  var rectangle = $element[0].getBoundingClientRect();
+  var pageDimensions = getPageDimensions();
+  var windowDimensions = getWindowDimensions();
 
   var container = $(template);
 
@@ -235,33 +243,13 @@ function createTable() {
   var firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
   var middleColumn = middleBlock.find('.lightbox-opening');
 
-  var topBlockHeight = rectangle.top - options.padding;
-  if (topBlockHeight <= 0) {
-    topBlockHeight = 0;
-    container.css('top', -options.padding)
-  }
-
+  var topBlockHeight = Math.max(0, rectangle.top - options.padding);
   var middleBlockHeight = rectangle.height + 2 * options.padding;
+  var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
 
-  var bottomBlockHeight = windowDimensions.height - topBlockHeight - middleBlockHeight
-  if (bottomBlockHeight <= 0) {
-    bottomBlockHeight = 0;
-    container.css('bottom', -options.padding)
-  }
-
-  var firstColumnWidth = rectangle.left - options.padding;
-  if (firstColumnWidth <= 0) {
-    firstColumnWidth = 0;
-    container.css('left', -options.padding);
-  }
-
+  var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
   var middleColumnWidth = rectangle.width + 2 * options.padding;
-
-  var lastColumnnWidth = windowDimensions.width - firstColumnWidth - middleColumnWidth;
-  if (lastColumnnWidth <= 0) {
-    lastColumnnWidth = 0;
-    container.css('right', -options.padding);
-  }
+  var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
 
   topBlock.height(topBlockHeight);
   middleBlock.height(middleBlockHeight);
@@ -270,7 +258,12 @@ function createTable() {
   firstColumn.width(firstColumnWidth);
   middleColumn.width(middleColumnWidth);
 
-  $columnWrapper.append(container);
+  if (topBlockHeight === 0)    container.css('top', -options.padding);
+  if (bottomBlockHeight === 0) container.css('bottom', -options.padding);
+  if (firstColumnWidth === 0)  container.css('left', -options.padding);
+  if (lastColumnnWidth === 0)  container.css('right', -options.padding);
+
+  return container;
 }
 
 /**
