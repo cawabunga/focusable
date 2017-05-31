@@ -30,13 +30,14 @@ var $ = require('jquery');
 var $columnWrapper = null;
 var $element = null;
 var isVisible = false;
-var columnClass = 'focusable-column';
-var columnSelector = '.' + columnClass;
+var containerClass = 'lightbox-highlight';
+var containerSelector = '.' + containerClass;
 var options = {
   fadeDuration: 700,
   hideOnClick: false,
   hideOnESC: false,
-  findOnResize: false
+  findOnResize: false,
+  padding: 5
 };
 
 $(document).ready(setup);
@@ -44,7 +45,6 @@ $(document).ready(setup);
 function setup() {
   $columnWrapper = $('body');
   createPlugin();
-  addStylesheet();
   addEvents();
 }
 
@@ -64,7 +64,7 @@ function createPlugin() {
 }
 
 function addEvents() {
-  $columnWrapper.on('click', columnSelector, clickOnOverlay);
+  $columnWrapper.on('click', containerSelector, clickOnOverlay);
   $(window).on("resize", resizeHandler);
   $(window).on("keyup", keyupHandler);
 }
@@ -101,18 +101,18 @@ function setFocus($el, userOptions) {
     createCircle();
   }
 
-  $columnWrapper.find(columnSelector).fadeIn(options.fadeDuration);
+  $columnWrapper.find(containerSelector).fadeIn(options.fadeDuration);
 };
 
 function clearColumns() {
-  $columnWrapper.find(columnSelector).remove();
+  $columnWrapper.find(containerSelector).remove();
 }
 
 function hide() {
   isVisible = false;
   $element = null;
   $('body').css('overflow', '');
-  $columnWrapper.find(columnSelector).fadeOut(options.fadeDuration, clearColumns);
+  $columnWrapper.find(containerSelector).fadeOut(options.fadeDuration, clearColumns);
 }
 
 function createColumns(forceVisibility) {
@@ -123,42 +123,58 @@ function createColumns(forceVisibility) {
   var createdColumns = 0;
   isVisible = true;
   clearColumns();
-
-  while (createdColumns < 4) {
-    createColumn(createdColumns);
-    createdColumns++;
-  }
+  createTable();
 
   if (forceVisibility === true) {
-    $(columnSelector).show();
+    $(containerSelector).show();
   }
 }
 
-function createColumn(index) {
-  var offset = $element.offset();
-  var top = 0, left = 0, width = px($element.outerWidth()), height = "100%";
-  var styles = '';
+function createTable() {
+  var rectangle = $element[0].getBoundingClientRect();
 
-  switch (index) {
-    case 0:
-      width = px(offset.left);
-      break;
-    case 1:
-      left = px(offset.left);
-      height = px(offset.top);
-      break;
-    case 2:
-      left = px(offset.left);
-      top = px($element.outerHeight() + offset.top);
-      break;
-    case 3:
-      width = "100%";
-      left = px(($element.outerWidth() + offset.left));
-      break;
-  }
+  var pageDimensions = {
+    height: document.body.scrollHeight,
+    width: document.body.scrollWidth
+  };
 
-  styles = 'top:' + top + ';left:' + left + ';width:' + width + ';height:' + height;
-  $columnWrapper.prepend('<div class="' + columnClass + '" style="' + styles + '"></div>');
+  var windowDimensions = {
+    height: window.innerHeight,
+    width: window.innerWidth
+  };
+
+  var container = $(`<div class="lightbox-highlight">
+    <div class="lightbox-row"><div class="lightbox-cell"></div></div>
+    <div class="lightbox-row lightbox-opening-row">
+      <div class="lightbox-cell"></div>
+      <div class="lightbox-cell lightbox-opening"></div>
+      <div class="lightbox-cell"></div>
+    </div>
+    <div class="lightbox-row"><div class="lightbox-cell"></div></div>
+  </div>`);
+
+  var topBlock = container.find('.lightbox-row:nth-of-type(1)');
+  var middleBlock = container.find('.lightbox-row:nth-of-type(2)');
+  var bottomBlock = container.find('.lightbox-row:nth-of-type(3)');
+
+  var firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
+  var middleColumn = middleBlock.find('.lightbox-opening');
+
+  var topBlockHeight = rectangle.top - options.padding;
+  var middleBlockHeight = rectangle.height + 2 * options.padding;
+  var bottomBlockHeight = windowDimensions.height - topBlockHeight - middleBlockHeight
+
+  var firstColumnWidth = rectangle.left - options.padding;
+  var middleColumnWidth = rectangle.width + 2 * options.padding;
+
+  topBlock.height(topBlockHeight);
+  middleBlock.height(middleBlockHeight);
+  bottomBlock.height(bottomBlockHeight);
+
+  firstColumn.width(firstColumnWidth);
+  middleColumn.width(middleColumnWidth);
+
+  $columnWrapper.append(container);
 }
 
 /**
@@ -174,7 +190,7 @@ function makeRectWithHole (width, height, radius) {
     '        <circle r="' + radius +  '" cx="' + (width/2) + '" cy="' +  (height/2) +'" />' +
     '    </mask>' +
     '</defs>' +
-    '<rect id="donut" style="fill:rgba(0,0,0,0.8);" width="' + width +'" height="' + height + '" mask="url(#hole)" />' +
+    '<rect id="donut" style="fill:rgba(0,0,0,0.4);" width="' + width +'" height="' + height + '" mask="url(#hole)" />' +
     '</svg>');
 };
 
@@ -185,7 +201,7 @@ function makeRectWithHole (width, height, radius) {
 function createCircle() {
   var bcr = $element.get(0).getBoundingClientRect();
   var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width/2, bcr.height/2));
-  circle.attr('class', columnClass);
+  circle.attr('class', containerClass);
   circle.css({
     left: bcr.left,
     top: bcr.top,
@@ -200,24 +216,6 @@ function createCircle() {
  */
 function px(value) {
   return value + 'px';
-}
-
-/**
- * Create dynamic CSS rules required by the library;
- * Using this approach we avoid to include an external css file.
- * @return {Void}
- */
-function addStylesheet() {
-  var sheet = (function() {
-    var style = document.createElement("style");
-
-    style.appendChild(document.createTextNode(""));
-    document.head.appendChild(style);
-
-    return style.sheet;
-  })();
-
-  sheet.insertRule(columnSelector + "{ display:none; position: absolute; z-index: 9999; background: rgba(0,0,0,0.8); }", 0);
 }
 
 function getActiveElement() {
