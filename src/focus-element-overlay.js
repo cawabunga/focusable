@@ -93,7 +93,6 @@ function clickOnOverlay() {
 }
 
 function setFocus($el, userOptions) {
-  $('body').css('overflow', 'hidden');
   options = $.extend(options, userOptions);
   $element = $el;
   createColumns();
@@ -112,7 +111,6 @@ function clearColumns() {
 function hide() {
   isVisible = false;
   $element = null;
-  $('body').css('overflow', '');
   $columnWrapper.find(containerSelector).fadeOut(options.fadeDuration, clearColumns);
 }
 
