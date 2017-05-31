@@ -145,6 +145,18 @@ function getWindowDimensions() {
   };
 }
 
+function isElementFixed(element) {
+  var elements = element.add(element.parents());
+  var isFixed = false;
+  elements.each(function() {
+    if ($(this).css("position") === "fixed") {
+      isFixed = true;
+      return false;
+    }
+  });
+  return isFixed;
+}
+
 function createTable() {
   var rectangle = $element[0].getBoundingClientRect();
   var pageDimensions = getPageDimensions();
@@ -174,10 +186,11 @@ function createTable() {
   firstColumn.width(firstColumnWidth);
   middleColumn.width(middleColumnWidth);
 
-  if (topBlockHeight === 0)    container.css('top', -options.padding);
-  if (bottomBlockHeight === 0) container.css('bottom', -options.padding);
-  if (firstColumnWidth === 0)  container.css('left', -options.padding);
-  if (lastColumnnWidth === 0)  container.css('right', -options.padding);
+  if (isElementFixed($element)) container.css('position', 'fixed');
+  if (topBlockHeight === 0)     container.css('top', -options.padding);
+  if (bottomBlockHeight === 0)  container.css('bottom', -options.padding);
+  if (firstColumnWidth === 0)   container.css('left', -options.padding);
+  if (lastColumnnWidth === 0)   container.css('right', -options.padding);
 
   return container;
 }
