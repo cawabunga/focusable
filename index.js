@@ -1,1 +1,1 @@
-module.exports = require('./app/focus-element-overlay');
+module.exports = require('./src/focus-element-overlay');
