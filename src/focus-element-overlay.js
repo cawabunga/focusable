@@ -145,6 +145,13 @@ function getWindowDimensions() {
   };
 }
 
+function getScrollDimensions() {
+  return {
+    height: window.pageYOffset || window.scrollY,
+    width: window.pageXOffset || window.scrollX
+  };
+}
+
 function isElementFixed(element) {
   var elements = element.add(element.parents());
   var isFixed = false;
@@ -161,6 +168,7 @@ function createTable() {
   var rectangle = $element[0].getBoundingClientRect();
   var pageDimensions = getPageDimensions();
   var windowDimensions = getWindowDimensions();
+  var scrollDimensions = getScrollDimensions();
 
   var container = $(template);
 
@@ -171,13 +179,24 @@ function createTable() {
   var firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
   var middleColumn = middleBlock.find('.lightbox-opening');
 
-  var topBlockHeight = Math.max(0, rectangle.top - options.padding);
-  var middleBlockHeight = rectangle.height + 2 * options.padding;
-  var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
+  if (isElementFixed($element)) {
+    var topBlockHeight = Math.max(0, rectangle.top - options.padding);
+    var middleBlockHeight = rectangle.height + 2 * options.padding;
+    var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
 
-  var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
-  var middleColumnWidth = rectangle.width + 2 * options.padding;
-  var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
+    var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
+    var middleColumnWidth = rectangle.width + 2 * options.padding;
+    var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
+
+  } else {
+    var topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
+    var middleBlockHeight = rectangle.height + 2 * options.padding;
+    var bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
+
+    var firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
+    var middleColumnWidth = rectangle.width + 2 * options.padding;
+    var lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
+  }
 
   topBlock.height(topBlockHeight);
   middleBlock.height(middleBlockHeight);
