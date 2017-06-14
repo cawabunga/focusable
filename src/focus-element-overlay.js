@@ -114,16 +114,45 @@ function hide() {
   $columnWrapper.find(containerSelector).fadeOut(options.fadeDuration, clearColumns);
 }
 
+function getRectangle(elements) {
+  const rects = elements.map(function (element) {
+    return element.getBoundingClientRect();
+  });
+
+  const leftValues = rects.map(function (rect) {
+    return rect.left;
+  });
+  const rightValues = rects.map(function (rect) {
+    return rect.right;
+  });
+  const topValues = rects.map(function (rect) {
+    return rect.top;
+  });
+  const bottomValues = rects.map(function (rect) {
+    return rect.bottom;
+  });
+
+  const left = Math.min(...leftValues);
+  const right = Math.max(...rightValues);
+  const top = Math.min(...topValues);
+  const bottom = Math.max(...bottomValues);
+  const width = right - left;
+  const height = bottom - top;
+
+  return { left, right, top, bottom, width, height };
+}
+
 function createColumns(forceVisibility) {
   if (!$element) {
     return;
   }
 
-  var createdColumns = 0;
   isVisible = true;
   clearColumns();
 
-  var lightboxElement = createTable();
+  var rectangle = getRectangle($element.toArray()),
+      lightboxElement = createTable(rectangle);
+
   $columnWrapper.append(lightboxElement);
 
   if (forceVisibility === true) {
@@ -164,8 +193,7 @@ function isElementFixed(element) {
   return isFixed;
 }
 
-function createTable() {
-  var rectangle = $element[0].getBoundingClientRect();
+function createTable(rectangle) {
   var pageDimensions = getPageDimensions();
   var windowDimensions = getWindowDimensions();
   var scrollDimensions = getScrollDimensions();
