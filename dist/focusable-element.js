@@ -295,21 +295,21 @@ function createTable(rectangle) {
   var middleColumn = middleBlock.find('.lightbox-opening');
 
   if (isElementFixed($element)) {
-    var _topBlockHeight = Math.max(0, rectangle.top - options.padding);
-    var _middleBlockHeight = rectangle.height + 2 * options.padding;
-    var _bottomBlockHeight = Math.max(0, windowDimensions.height - _topBlockHeight - _middleBlockHeight);
+    var topBlockHeight = Math.max(0, rectangle.top - options.padding);
+    var middleBlockHeight = rectangle.height + 2 * options.padding;
+    var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
 
-    var _firstColumnWidth = Math.max(0, rectangle.left - options.padding);
-    var _middleColumnWidth = rectangle.width + 2 * options.padding;
-    var _lastColumnnWidth = Math.max(0, windowDimensions.width - _firstColumnWidth - _middleColumnWidth);
+    var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
+    var middleColumnWidth = rectangle.width + 2 * options.padding;
+    var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
   } else {
-    var _topBlockHeight2 = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
-    var _middleBlockHeight2 = rectangle.height + 2 * options.padding;
-    var _bottomBlockHeight2 = Math.max(0, pageDimensions.height - _topBlockHeight2 - _middleBlockHeight2);
+    var topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
+    var middleBlockHeight = rectangle.height + 2 * options.padding;
+    var bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
 
-    var _firstColumnWidth2 = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
-    var _middleColumnWidth2 = rectangle.width + 2 * options.padding;
-    var _lastColumnnWidth2 = Math.max(0, pageDimensions.width - _firstColumnWidth2 - _middleColumnWidth2);
+    var firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
+    var middleColumnWidth = rectangle.width + 2 * options.padding;
+    var lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
   }
 
   topBlock.height(topBlockHeight);
