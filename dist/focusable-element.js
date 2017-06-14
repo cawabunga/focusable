@@ -80,6 +80,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 /*!
  * Focus element overlay (Focusable) v0.1
  * https://github.com/zzarcon/focusable
@@ -136,11 +141,11 @@ function setup() {
  * @return {jQuery object} this
  */
 function createPlugin() {
-  if (!window.jQuery || !window.$ || !window.$.fn) {
+  if (!window.jQuery || !window.$ || !window.$.fn) {
     return;
   }
 
-  $.fn.focusable = function(options) {
+  $.fn.focusable = function (options) {
     Focusable.setFocus(this, options);
     return this;
   };
@@ -197,31 +202,31 @@ function hide() {
 }
 
 function getRectangle(elements) {
-  const rects = elements.map(function (element) {
+  var rects = elements.map(function (element) {
     return element.getBoundingClientRect();
   });
 
-  const leftValues = rects.map(function (rect) {
+  var leftValues = rects.map(function (rect) {
     return rect.left;
   });
-  const rightValues = rects.map(function (rect) {
+  var rightValues = rects.map(function (rect) {
     return rect.right;
   });
-  const topValues = rects.map(function (rect) {
+  var topValues = rects.map(function (rect) {
     return rect.top;
   });
-  const bottomValues = rects.map(function (rect) {
+  var bottomValues = rects.map(function (rect) {
     return rect.bottom;
   });
 
-  const left = Math.min(...leftValues);
-  const right = Math.max(...rightValues);
-  const top = Math.min(...topValues);
-  const bottom = Math.max(...bottomValues);
-  const width = right - left;
-  const height = bottom - top;
+  var left = Math.min.apply(Math, _toConsumableArray(leftValues));
+  var right = Math.max.apply(Math, _toConsumableArray(rightValues));
+  var top = Math.min.apply(Math, _toConsumableArray(topValues));
+  var bottom = Math.max.apply(Math, _toConsumableArray(bottomValues));
+  var width = right - left;
+  var height = bottom - top;
 
-  return { left, right, top, bottom, width, height };
+  return { left: left, right: right, top: top, bottom: bottom, width: width, height: height };
 }
 
 function createColumns(forceVisibility) {
@@ -232,8 +237,8 @@ function createColumns(forceVisibility) {
   isVisible = true;
   clearColumns();
 
-  var rectangle = getRectangle($element.toArray()),
-      lightboxElement = createTable(rectangle);
+  var rectangle = getRectangle($element.toArray());
+  var lightboxElement = createTable(rectangle);
 
   $columnWrapper.append(lightboxElement);
 
@@ -266,7 +271,7 @@ function getScrollDimensions() {
 function isElementFixed(element) {
   var elements = element.add(element.parents());
   var isFixed = false;
-  elements.each(function() {
+  elements.each(function () {
     if ($(this).css("position") === "fixed") {
       isFixed = true;
       return false;
@@ -290,22 +295,21 @@ function createTable(rectangle) {
   var middleColumn = middleBlock.find('.lightbox-opening');
 
   if (isElementFixed($element)) {
-    var topBlockHeight = Math.max(0, rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
+    var _topBlockHeight = Math.max(0, rectangle.top - options.padding);
+    var _middleBlockHeight = rectangle.height + 2 * options.padding;
+    var _bottomBlockHeight = Math.max(0, windowDimensions.height - _topBlockHeight - _middleBlockHeight);
 
-    var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
-
+    var _firstColumnWidth = Math.max(0, rectangle.left - options.padding);
+    var _middleColumnWidth = rectangle.width + 2 * options.padding;
+    var _lastColumnnWidth = Math.max(0, windowDimensions.width - _firstColumnWidth - _middleColumnWidth);
   } else {
-    var topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
+    var _topBlockHeight2 = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
+    var _middleBlockHeight2 = rectangle.height + 2 * options.padding;
+    var _bottomBlockHeight2 = Math.max(0, pageDimensions.height - _topBlockHeight2 - _middleBlockHeight2);
 
-    var firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
+    var _firstColumnWidth2 = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
+    var _middleColumnWidth2 = rectangle.width + 2 * options.padding;
+    var _lastColumnnWidth2 = Math.max(0, pageDimensions.width - _firstColumnWidth2 - _middleColumnWidth2);
   }
 
   topBlock.height(topBlockHeight);
@@ -316,10 +320,10 @@ function createTable(rectangle) {
   middleColumn.width(middleColumnWidth);
 
   if (isElementFixed($element)) container.css('position', 'fixed');
-  if (topBlockHeight === 0)     container.css('top', -options.padding);
-  if (bottomBlockHeight === 0)  container.css('bottom', -options.padding);
-  if (firstColumnWidth === 0)   container.css('left', -options.padding);
-  if (lastColumnnWidth === 0)   container.css('right', -options.padding);
+  if (topBlockHeight === 0) container.css('top', -options.padding);
+  if (bottomBlockHeight === 0) container.css('bottom', -options.padding);
+  if (firstColumnWidth === 0) container.css('left', -options.padding);
+  if (lastColumnnWidth === 0) container.css('right', -options.padding);
 
   return container;
 }
@@ -328,17 +332,8 @@ function createTable(rectangle) {
  * Create an svg node that outputs a rectangle with a hole in center
  * @return {jQuery object}
  */
-function makeRectWithHole (width, height, radius) {
-   return $(
-    '<svg width=' + width + ' height=' + height + '>' +
-    '<defs>' +
-    '    <mask id="hole">' +
-    '        <rect width="100%" height="100%" fill="white"/>' +
-    '        <circle r="' + radius +  '" cx="' + (width/2) + '" cy="' +  (height/2) +'" />' +
-    '    </mask>' +
-    '</defs>' +
-    '<rect id="donut" style="fill:rgba(0,0,0,0.4);" width="' + width +'" height="' + height + '" mask="url(#hole)" />' +
-    '</svg>');
+function makeRectWithHole(width, height, radius) {
+  return $('<svg width=' + width + ' height=' + height + '>' + '<defs>' + '    <mask id="hole">' + '        <rect width="100%" height="100%" fill="white"/>' + '        <circle r="' + radius + '" cx="' + width / 2 + '" cy="' + height / 2 + '" />' + '    </mask>' + '</defs>' + '<rect id="donut" style="fill:rgba(0,0,0,0.4);" width="' + width + '" height="' + height + '" mask="url(#hole)" />' + '</svg>');
 };
 
 /**
@@ -347,7 +342,7 @@ function makeRectWithHole (width, height, radius) {
  */
 function createCircle() {
   var bcr = $element.get(0).getBoundingClientRect();
-  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width/2, bcr.height/2));
+  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width / 2, bcr.height / 2));
   circle.attr('class', containerClass);
   circle.css({
     left: bcr.left,
@@ -393,6 +388,9 @@ module.exports = {
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 module.exports = __webpack_require__(0);
 

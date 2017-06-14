@@ -25,15 +25,15 @@
  * Date: 2014-11-18
  */
 
-var $ = require('jquery');
-var template = require('./template.html');
+const $ = require('jquery');
+const template = require('./template.html');
 
-var $columnWrapper = null;
-var $element = null;
-var isVisible = false;
-var containerClass = 'lightbox-highlight';
-var containerSelector = '.' + containerClass;
-var options = {
+let $columnWrapper = null;
+let $element = null;
+let isVisible = false;
+const containerClass = 'lightbox-highlight';
+const containerSelector = '.' + containerClass;
+let options = {
   fadeDuration: 700,
   hideOnClick: false,
   hideOnESC: false,
@@ -150,8 +150,8 @@ function createColumns(forceVisibility) {
   isVisible = true;
   clearColumns();
 
-  var rectangle = getRectangle($element.toArray()),
-      lightboxElement = createTable(rectangle);
+  const rectangle = getRectangle($element.toArray());
+  const lightboxElement = createTable(rectangle);
 
   $columnWrapper.append(lightboxElement);
 
@@ -182,8 +182,8 @@ function getScrollDimensions() {
 }
 
 function isElementFixed(element) {
-  var elements = element.add(element.parents());
-  var isFixed = false;
+  const elements = element.add(element.parents());
+  let isFixed = false;
   elements.each(function() {
     if ($(this).css("position") === "fixed") {
       isFixed = true;
@@ -194,36 +194,36 @@ function isElementFixed(element) {
 }
 
 function createTable(rectangle) {
-  var pageDimensions = getPageDimensions();
-  var windowDimensions = getWindowDimensions();
-  var scrollDimensions = getScrollDimensions();
+  const pageDimensions = getPageDimensions();
+  const windowDimensions = getWindowDimensions();
+  const scrollDimensions = getScrollDimensions();
 
-  var container = $(template);
+  const container = $(template);
 
-  var topBlock = container.find('.lightbox-row:nth-of-type(1)');
-  var middleBlock = container.find('.lightbox-row:nth-of-type(2)');
-  var bottomBlock = container.find('.lightbox-row:nth-of-type(3)');
+  const topBlock = container.find('.lightbox-row:nth-of-type(1)');
+  const middleBlock = container.find('.lightbox-row:nth-of-type(2)');
+  const bottomBlock = container.find('.lightbox-row:nth-of-type(3)');
 
-  var firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
-  var middleColumn = middleBlock.find('.lightbox-opening');
+  const firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
+  const middleColumn = middleBlock.find('.lightbox-opening');
 
   if (isElementFixed($element)) {
-    var topBlockHeight = Math.max(0, rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
+    const topBlockHeight = Math.max(0, rectangle.top - options.padding);
+    const middleBlockHeight = rectangle.height + 2 * options.padding;
+    const bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
 
-    var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
+    const firstColumnWidth = Math.max(0, rectangle.left - options.padding);
+    const middleColumnWidth = rectangle.width + 2 * options.padding;
+    const lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
 
   } else {
-    var topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
+    const topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
+    const middleBlockHeight = rectangle.height + 2 * options.padding;
+    const bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
 
-    var firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
+    const firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
+    const middleColumnWidth = rectangle.width + 2 * options.padding;
+    const lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
   }
 
   topBlock.height(topBlockHeight);
@@ -264,8 +264,8 @@ function makeRectWithHole (width, height, radius) {
  * * @return {Void}
  */
 function createCircle() {
-  var bcr = $element.get(0).getBoundingClientRect();
-  var circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width/2, bcr.height/2));
+  const bcr = $element.get(0).getBoundingClientRect();
+  const circle = makeRectWithHole(bcr.width, bcr.height, Math.min(bcr.width/2, bcr.height/2));
   circle.attr('class', containerClass);
   circle.css({
     left: bcr.left,
