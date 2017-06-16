@@ -11,11 +11,26 @@
   <script src="demo.js"></script>
   <style>
 
-    /* Make focused element clickable, so it overlaps the backdrop */
+    /**
+     * Make focused element clickable, so it overlaps the backdrop
+     * Mainly used when `canvas` option is enabled, because we can't click through canvas element
+     *
+     * Be careful, changing the position rule may break your the layout of your application
+     * So I suggest to apply this rule to the specific classes. Example:
+     *
+     * .my-fancy-block {}
+     * .my-fancy-block.focused {
+     *   position: relative;
+     *   z-index: 9999;
+     * }
+     *
+     * Much easier control that stuff by SASS by making mixin.
+     */
     .focused {
       position: relative;
       z-index: 9999;
     }
+
 
     body{
       text-align: center;
@@ -26,9 +41,9 @@
     }
     li{
       list-style: none;
-      border: 3px solid #ccc;
-      margin: 10px;
-      padding: 10px 0;
+      border: 2px solid #ccc;
+      margin: 5px;
+      padding: 5px 0;
     }
     img{
       margin-top: 10px;
