@@ -5,7 +5,8 @@
   "main": "dist/focusable-element.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && ./node_modules/.bin/webpack"
+    "build": "rm -rf dist && ./node_modules/.bin/webpack",
+    "serve": "rm -rf dist && ./node_modules/.bin/webpack --watch"
   },
   "dependencies": {
     "raw-loader": "^0.5.1"
