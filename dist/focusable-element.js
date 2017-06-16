@@ -126,7 +126,8 @@ var options = {
   hideOnESC: false,
   findOnResize: false,
   padding: 5,
-  click: $.noop
+  click: $.noop,
+  canvas: false
 };
 
 $(document).ready(setup);
@@ -181,7 +182,11 @@ function clickOnOverlay() {
 }
 
 function bindClickEventListener(lightboxElement, handler) {
-  lightboxElement.on('click', '.lightbox-cell:not(.lightbox-opening)', handler);
+  if (lightboxElement[0].tagName === 'CANVAS') {
+    lightboxElement.on('click', handler);
+  } else {
+    lightboxElement.on('click', '.lightbox-cell:not(.lightbox-opening)', handler);
+  }
 }
 
 function setFocus($el, userOptions) {
@@ -243,7 +248,7 @@ function createColumns(forceVisibility) {
   clearColumns();
 
   var rectangle = getRectangle($element.toArray());
-  var lightboxElement = createTable(rectangle);
+  var lightboxElement = options.canvas ? createCanvasBackdrop(rectangle) : createTable(rectangle);
 
   bindClickEventListener(lightboxElement, options.click);
 
@@ -333,6 +338,33 @@ function createTable(rectangle) {
   if (lastColumnnWidth === 0) container.css('right', -options.padding);
 
   return container;
+}
+
+function createCanvasBackdrop(rectangle) {
+  var pageDimensions = getPageDimensions();
+  var windowDimensions = getWindowDimensions();
+  var scrollDimensions = getScrollDimensions();
+
+  var canvas = document.createElement('canvas');
+  canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
+  var context = canvas.getContext('2d');
+
+  if (isElementFixed($element)) {
+    canvas.classList.add('lightbox-highlight--fixed');
+    canvas.width = windowDimensions.width;
+    canvas.height = windowDimensions.height;
+
+    context.fillRect(0, 0, windowDimensions.width, windowDimensions.height);
+    context.clearRect(rectangle.left - options.padding, rectangle.top - options.padding, rectangle.width + options.padding * 2, rectangle.height + options.padding * 2);
+  } else {
+    canvas.width = pageDimensions.width;
+    canvas.height = pageDimensions.height;
+
+    context.fillRect(0, 0, pageDimensions.width, pageDimensions.height);
+    context.clearRect(rectangle.left - options.padding, rectangle.top - options.padding, rectangle.width + options.padding * 2, rectangle.height + options.padding * 2);
+  }
+
+  return $(canvas);
 }
 
 /**

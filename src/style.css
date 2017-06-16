@@ -4,9 +4,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  pointer-events: none;
   background: transparent;
   z-index: 2147482642;
+}
+.lightbox-highlight--fixed {
+  position: fixed;
+}
+.lightbox-highlight--canvas {
+  opacity: .4;
 }
 .lightbox-row {
   display: flex;
@@ -26,7 +31,6 @@
   flex-shrink: 1;
 }
 .lightbox-cell.lightbox-opening {
-  pointer-events: none;
   border-radius: 5px;
   box-shadow: 0 0 10px 1437px rgba(0, 0, 0, 0.4);
 }

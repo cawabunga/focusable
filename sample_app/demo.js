@@ -26,6 +26,7 @@
       click: function () {
         console.log('backdrop clicked');
       },
+      canvas: true,
     };
   }
 })();
