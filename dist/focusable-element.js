@@ -390,13 +390,15 @@ function createCanvasBackdrop() {
   var windowDimensions = getWindowDimensions();
   var scrollDimensions = getScrollDimensions();
 
+  var isFixed = isElementFixed($element);
+
   var canvas = document.createElement('canvas');
   canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
   var context = canvas.getContext('2d');
 
   var canvasWidth = void 0,
       canvasHeight = void 0;
-  if (isElementFixed($element)) {
+  if (isFixed) {
     canvas.classList.add('lightbox-highlight--fixed');
     canvasWidth = windowDimensions.width;
     canvasHeight = windowDimensions.height;
@@ -413,14 +415,25 @@ function createCanvasBackdrop() {
     rectangles[_key] = arguments[_key];
   }
 
-  rectangles.forEach(function (rectangle) {
-    var left = rectangle.left - options.padding;
-    var top = rectangle.top - options.padding;
-    var width = rectangle.width + options.padding * 2;
-    var height = rectangle.height + options.padding * 2;
+  if (isFixed) {
+    rectangles.forEach(function (rectangle) {
+      var left = rectangle.left - options.padding;
+      var top = rectangle.top - options.padding;
+      var width = rectangle.width + options.padding * 2;
+      var height = rectangle.height + options.padding * 2;
 
-    context.clearRect(left, top, width, height);
-  });
+      context.clearRect(left, top, width, height);
+    });
+  } else {
+    rectangles.forEach(function (rectangle) {
+      var left = scrollDimensions.width + rectangle.left - options.padding;
+      var top = scrollDimensions.height + rectangle.top - options.padding;
+      var width = rectangle.width + options.padding * 2;
+      var height = rectangle.height + options.padding * 2;
+
+      context.clearRect(left, top, width, height);
+    });
+  }
 
   return $(canvas);
 }

@@ -302,12 +302,14 @@ function createCanvasBackdrop(...rectangles) {
   const windowDimensions = getWindowDimensions();
   const scrollDimensions = getScrollDimensions();
 
+  const isFixed = isElementFixed($element);
+
   const canvas = document.createElement('canvas');
   canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
   const context = canvas.getContext('2d');
 
   let canvasWidth, canvasHeight;
-  if (isElementFixed($element)) {
+  if (isFixed) {
     canvas.classList.add('lightbox-highlight--fixed')
     canvasWidth = windowDimensions.width;
     canvasHeight = windowDimensions.height;
@@ -321,14 +323,26 @@ function createCanvasBackdrop(...rectangles) {
   canvas.height = canvasHeight;
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  rectangles.forEach(rectangle => {
-    const left = rectangle.left - options.padding;
-    const top = rectangle.top - options.padding;
-    const width = rectangle.width + options.padding * 2;
-    const height = rectangle.height + options.padding * 2;
+  if (isFixed) {
+    rectangles.forEach(rectangle => {
+      const left = rectangle.left - options.padding;
+      const top = rectangle.top - options.padding;
+      const width = rectangle.width + options.padding * 2;
+      const height = rectangle.height + options.padding * 2;
 
-    context.clearRect(left, top, width, height);
-  });
+      context.clearRect(left, top, width, height);
+    });
+
+  } else {
+    rectangles.forEach(rectangle => {
+      const left = scrollDimensions.width + rectangle.left - options.padding;
+      const top = scrollDimensions.height + rectangle.top - options.padding;
+      const width = rectangle.width + options.padding * 2;
+      const height = rectangle.height + options.padding * 2;
+
+      context.clearRect(left, top, width, height);
+    });
+  }
 
   return $(canvas);
 }
