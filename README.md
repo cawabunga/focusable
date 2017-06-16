@@ -2,7 +2,9 @@ Focusable [![Build Status](https://travis-ci.org/cawabunga/focusable.svg?branch=
 =============
 
 An awesome and lightweight library for performing spotlight in your DOM elements, setting an animated overlay to the rest of the page.
-You can find a [live demo here (outdated)](http://zzarcon.github.io/focusable/).
+**The library uses flexboxes and canvas.**
+Apart from highlighting a regular elements also supports highlighting fixed positioned elements and highlighting multiple elements at one time.
+You can find a [live demo here](http://cawabunga.github.io/focusable/).
 
 ### Showcase
 
@@ -50,8 +52,8 @@ fadeDuration | Number | 700 | Duration of the overlay transition (milliseconds).
 hideOnClick | Boolean | false | Hides the overlay when the user click into it.
 hideOnESC | Boolean | false | Hides the overlay when the user press Esc.
 findOnResize | Boolean | false | Refind the element in the DOM in case that the element don't still exists.
-circle | Boolean | false | Have the spotlight in a circle shape
-padding | Number | 5 |
+circle | Boolean | false | Have the spotlight in a circle shape. **The feauture is broken and will be removed in next version.**
+padding | Number | 5 | Padding of the highlighted area in pixels.
 click | Function | noop | Click handler on the backdrop.
 canvas | Boolean | false | By the default the backdrop is being combined by multiple html tags: columns and rows. Whilst option is enabled the backdrop is being drawn by canvas.
 multiple | Boolean | false | By the default the backdrop is being displayed as single area. By enabling this option you can highlight multiple elements (works only for canvas mode).
