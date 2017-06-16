@@ -277,19 +277,20 @@ function createCanvasBackdrop(...rectangles) {
   canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
   const context = canvas.getContext('2d');
 
+  let canvasWidth, canvasHeight;
   if (isElementFixed($element)) {
     canvas.classList.add('lightbox-highlight--fixed')
-    canvas.width = windowDimensions.width;
-    canvas.height = windowDimensions.height;
-
-    context.fillRect(0, 0, windowDimensions.width, windowDimensions.height);
+    canvasWidth = windowDimensions.width;
+    canvasHeight = windowDimensions.height;
 
   } else {
-    canvas.width = pageDimensions.width;
-    canvas.height = pageDimensions.height;
-
-    context.fillRect(0, 0, pageDimensions.width, pageDimensions.height);
+    canvasWidth = pageDimensions.width;
+    canvasHeight = pageDimensions.height;
   }
+
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  context.fillRect(0, 0, canvasWidth, canvasHeight);
 
   rectangles.forEach(rectangle => {
     const left = rectangle.left - options.padding;

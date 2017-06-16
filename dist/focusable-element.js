@@ -362,18 +362,20 @@ function createCanvasBackdrop() {
   canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
   var context = canvas.getContext('2d');
 
+  var canvasWidth = void 0,
+      canvasHeight = void 0;
   if (isElementFixed($element)) {
     canvas.classList.add('lightbox-highlight--fixed');
-    canvas.width = windowDimensions.width;
-    canvas.height = windowDimensions.height;
-
-    context.fillRect(0, 0, windowDimensions.width, windowDimensions.height);
+    canvasWidth = windowDimensions.width;
+    canvasHeight = windowDimensions.height;
   } else {
-    canvas.width = pageDimensions.width;
-    canvas.height = pageDimensions.height;
-
-    context.fillRect(0, 0, pageDimensions.width, pageDimensions.height);
+    canvasWidth = pageDimensions.width;
+    canvasHeight = pageDimensions.height;
   }
+
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  context.fillRect(0, 0, canvasWidth, canvasHeight);
 
   for (var _len = arguments.length, rectangles = Array(_len), _key = 0; _key < _len; _key++) {
     rectangles[_key] = arguments[_key];
