@@ -2,7 +2,7 @@
   "use strict";
 
   function isActive() {
-    var areColumnsInDom = $('.focusable-column').not('svg').length === 4;
+    var areColumnsInDom = $('.lightbox-highlight').length === 1;
 
     return areColumnsInDom;
   }
@@ -36,10 +36,15 @@
   test("Default options", function() {
     var options = Focusable.getOptions();
 
-    ok(options.fadeDuration, 700);
-    ok(!options.hideOnClick, true);
-    ok(!options.hideOnESC, true);
-    ok(!options.findOnResize, true);
+    equal(options.fadeDuration, 700);
+    equal(options.hideOnClick, false);
+    equal(options.hideOnESC, false);
+    equal(options.findOnResize, false);
+    equal(options.click, $.noop);
+    equal(options.padding, 5);
+    equal(options.canvas, false);
+    equal(options.multiple, false);
+    equal(options.activeElementClasses, 'focused');
   });
 
   test("Hide focus", function() {
@@ -66,13 +71,4 @@
     assert.ok(isActive(), false, 'The overlay is inactive');
   });
 
-  test("Circle option", function() {
-    var $element = find('header');
-    Focusable.setFocus($element, { circle: true });
-
-    ok(isActive(), true, 'The overlay is in DOM');
-    ok(Focusable.getActiveElement() == $element, true, 'The focused element is active');
-    ok($('svg.focusable-column').length === 1);
-
-  });
 })();

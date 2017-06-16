@@ -152,8 +152,8 @@ var step_2 = {
 };
 ```
 
-###### Runing tests (outdated)
-* `npm install`
+###### Runing tests
+* `yarn install`
 * `grunt`
 * See the result of testsuite in [http://localhost:9092](http://localhost:9092)
 

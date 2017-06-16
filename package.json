@@ -4,7 +4,7 @@
   "description": "Set focus on DOM element adding overlay to the rest of the page",
   "main": "dist/focusable-element.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "grunt test",
     "build": "rm -rf dist && ./node_modules/.bin/webpack",
     "serve": "rm -rf dist && ./node_modules/.bin/webpack --watch"
   },
@@ -23,6 +23,7 @@
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-contrib-watch": "~0.5.3",
     "lodash": "^4.17.4",
+    "phantomjs-prebuilt": "^2.1.14",
     "webpack": "^2.6.1"
   },
   "repository": {
