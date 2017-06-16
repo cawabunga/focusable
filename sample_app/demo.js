@@ -22,7 +22,10 @@
       fadeDuration: parseInt($('#fade-duration').val()),
       hideOnClick: $('#hide-on-click').is(':checked'),
       hideOnESC: $('#hide-on-esc').is(':checked'),
-      findOnResize: $('#find-on-resize').is(':checked')
+      findOnResize: $('#find-on-resize').is(':checked'),
+      click: function () {
+        console.log('backdrop clicked');
+      },
     };
   }
 })();

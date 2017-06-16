@@ -38,7 +38,8 @@ let options = {
   hideOnClick: false,
   hideOnESC: false,
   findOnResize: false,
-  padding: 5
+  padding: 5,
+  click: $.noop
 };
 
 $(document).ready(setup);
@@ -90,6 +91,10 @@ function clickOnOverlay() {
   }
 
   hide();
+}
+
+function bindClickEventListener(lightboxElement, handler) {
+  lightboxElement.on('click', '.lightbox-cell:not(.lightbox-opening)', handler)
 }
 
 function setFocus($el, userOptions) {
@@ -152,6 +157,8 @@ function createColumns(forceVisibility) {
 
   const rectangle = getRectangle($element.toArray());
   const lightboxElement = createTable(rectangle);
+
+  bindClickEventListener(lightboxElement, options.click)
 
   $columnWrapper.append(lightboxElement);
 
