@@ -127,7 +127,8 @@ var options = {
   findOnResize: false,
   padding: 5,
   click: $.noop,
-  canvas: false
+  canvas: false,
+  multiple: false
 };
 
 $(document).ready(setup);
@@ -211,7 +212,7 @@ function hide() {
   $columnWrapper.find(containerSelector).fadeOut(options.fadeDuration, clearColumns);
 }
 
-function getRectangle(elements) {
+function getSingleRectangle(elements) {
   var rects = elements.map(function (element) {
     return element.getBoundingClientRect();
   });
@@ -239,6 +240,12 @@ function getRectangle(elements) {
   return { left: left, right: right, top: top, bottom: bottom, width: width, height: height };
 }
 
+function getRectangles(elements) {
+  return elements.map(function (element) {
+    return element.getBoundingClientRect();
+  });
+}
+
 function createColumns(forceVisibility) {
   if (!$element) {
     return;
@@ -247,8 +254,14 @@ function createColumns(forceVisibility) {
   isVisible = true;
   clearColumns();
 
-  var rectangle = getRectangle($element.toArray());
-  var lightboxElement = options.canvas ? createCanvasBackdrop(rectangle) : createTable(rectangle);
+  var rectangles = void 0;
+  if (options.multiple) {
+    rectangles = getRectangles($element.toArray());
+  } else {
+    rectangles = [getSingleRectangle($element.toArray())];
+  }
+
+  var lightboxElement = options.canvas ? createCanvasBackdrop.apply(undefined, _toConsumableArray(rectangles)) : createTable.apply(undefined, _toConsumableArray(rectangles));
 
   bindClickEventListener(lightboxElement, options.click);
 
@@ -340,7 +353,7 @@ function createTable(rectangle) {
   return container;
 }
 
-function createCanvasBackdrop(rectangle) {
+function createCanvasBackdrop() {
   var pageDimensions = getPageDimensions();
   var windowDimensions = getWindowDimensions();
   var scrollDimensions = getScrollDimensions();
@@ -355,14 +368,25 @@ function createCanvasBackdrop(rectangle) {
     canvas.height = windowDimensions.height;
 
     context.fillRect(0, 0, windowDimensions.width, windowDimensions.height);
-    context.clearRect(rectangle.left - options.padding, rectangle.top - options.padding, rectangle.width + options.padding * 2, rectangle.height + options.padding * 2);
   } else {
     canvas.width = pageDimensions.width;
     canvas.height = pageDimensions.height;
 
     context.fillRect(0, 0, pageDimensions.width, pageDimensions.height);
-    context.clearRect(rectangle.left - options.padding, rectangle.top - options.padding, rectangle.width + options.padding * 2, rectangle.height + options.padding * 2);
   }
+
+  for (var _len = arguments.length, rectangles = Array(_len), _key = 0; _key < _len; _key++) {
+    rectangles[_key] = arguments[_key];
+  }
+
+  rectangles.forEach(function (rectangle) {
+    var left = rectangle.left - options.padding;
+    var top = rectangle.top - options.padding;
+    var width = rectangle.width + options.padding * 2;
+    var height = rectangle.height + options.padding * 2;
+
+    context.clearRect(left, top, width, height);
+  });
 
   return $(canvas);
 }

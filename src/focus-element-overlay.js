@@ -41,6 +41,7 @@ let options = {
   padding: 5,
   click: $.noop,
   canvas: false,
+  multiple: false,
 };
 
 $(document).ready(setup);
@@ -125,7 +126,7 @@ function hide() {
   $columnWrapper.find(containerSelector).fadeOut(options.fadeDuration, clearColumns);
 }
 
-function getRectangle(elements) {
+function getSingleRectangle(elements) {
   const rects = elements.map(function (element) {
     return element.getBoundingClientRect();
   });
@@ -153,6 +154,12 @@ function getRectangle(elements) {
   return { left, right, top, bottom, width, height };
 }
 
+function getRectangles(elements) {
+  return elements.map(element => {
+    return element.getBoundingClientRect();
+  });
+}
+
 function createColumns(forceVisibility) {
   if (!$element) {
     return;
@@ -161,8 +168,14 @@ function createColumns(forceVisibility) {
   isVisible = true;
   clearColumns();
 
-  const rectangle = getRectangle($element.toArray());
-  const lightboxElement = options.canvas ? createCanvasBackdrop(rectangle) : createTable(rectangle);
+  let rectangles;
+  if (options.multiple) {
+    rectangles = getRectangles($element.toArray());
+  } else {
+    rectangles = [getSingleRectangle($element.toArray())];
+  }
+
+  const lightboxElement = options.canvas ? createCanvasBackdrop(...rectangles) : createTable(...rectangles);
 
   bindClickEventListener(lightboxElement, options.click)
 
@@ -255,7 +268,7 @@ function createTable(rectangle) {
   return container;
 }
 
-function createCanvasBackdrop(rectangle) {
+function createCanvasBackdrop(...rectangles) {
   const pageDimensions = getPageDimensions();
   const windowDimensions = getWindowDimensions();
   const scrollDimensions = getScrollDimensions();
@@ -270,15 +283,22 @@ function createCanvasBackdrop(rectangle) {
     canvas.height = windowDimensions.height;
 
     context.fillRect(0, 0, windowDimensions.width, windowDimensions.height);
-    context.clearRect(rectangle.left - options.padding, rectangle.top - options.padding, rectangle.width + options.padding * 2, rectangle.height + options.padding * 2);
 
   } else {
     canvas.width = pageDimensions.width;
     canvas.height = pageDimensions.height;
 
     context.fillRect(0, 0, pageDimensions.width, pageDimensions.height);
-    context.clearRect(rectangle.left - options.padding, rectangle.top - options.padding, rectangle.width + options.padding * 2, rectangle.height + options.padding * 2);
   }
+
+  rectangles.forEach(rectangle => {
+    const left = rectangle.left - options.padding;
+    const top = rectangle.top - options.padding;
+    const width = rectangle.width + options.padding * 2;
+    const height = rectangle.height + options.padding * 2;
+
+    context.clearRect(left, top, width, height);
+  });
 
   return $(canvas);
 }
