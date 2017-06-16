@@ -182,9 +182,30 @@ function clickOnOverlay() {
   hide();
 }
 
-function bindClickEventListener(lightboxElement, handler) {
+function collides(rectangles, x, y) {
+  return rectangles.reduce(function (memo, rectangle) {
+    var left = rectangle.left;
+    var right = rectangle.left + rectangle.width;
+    var top = rectangle.top;
+    var bottom = rectangle.top + rectangle.height;
+    return memo || left <= x && x <= right && top <= y && y <= bottom;
+  }, false);
+}
+
+function rejectByRectangles(rectangles, handler) {
+  return function (event) {
+    var x = event.offsetX;
+    var y = event.offsetY;
+
+    if (!collides(rectangles, x, y)) {
+      handler.call(this, event);
+    }
+  };
+}
+
+function bindClickEventListener(lightboxElement, handler, rectangles) {
   if (lightboxElement[0].tagName === 'CANVAS') {
-    lightboxElement.on('click', handler);
+    lightboxElement.on('click', rejectByRectangles(rectangles, handler));
   } else {
     lightboxElement.on('click', '.lightbox-cell:not(.lightbox-opening)', handler);
   }
@@ -263,7 +284,7 @@ function createColumns(forceVisibility) {
 
   var lightboxElement = options.canvas ? createCanvasBackdrop.apply(undefined, _toConsumableArray(rectangles)) : createTable.apply(undefined, _toConsumableArray(rectangles));
 
-  bindClickEventListener(lightboxElement, options.click);
+  bindClickEventListener(lightboxElement, options.click, rectangles);
 
   $columnWrapper.append(lightboxElement);
 

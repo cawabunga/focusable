@@ -95,13 +95,33 @@ function clickOnOverlay() {
   hide();
 }
 
-function bindClickEventListener(lightboxElement, handler) {
+function collides(rectangles, x, y) {
+    return rectangles.reduce((memo, rectangle) => {
+      const left = rectangle.left;
+      const right = rectangle.left + rectangle.width;
+      const top = rectangle.top;
+      const bottom = rectangle.top + rectangle.height;
+      return memo || (left <= x && x <= right  && top <= y && y <= bottom);
+    }, false);
+}
+
+function rejectByRectangles(rectangles, handler) {
+  return function(event) {
+    const x = event.offsetX;
+    const y = event.offsetY;
+
+    if (!collides(rectangles, x, y)) {
+      handler.call(this, event)
+    }
+  };
+}
+
+function bindClickEventListener(lightboxElement, handler, rectangles) {
   if (lightboxElement[0].tagName === 'CANVAS') {
-    lightboxElement.on('click', handler);
+    lightboxElement.on('click', rejectByRectangles(rectangles, handler));
   } else {
     lightboxElement.on('click', '.lightbox-cell:not(.lightbox-opening)', handler);
   }
-
 }
 
 function setFocus($el, userOptions) {
@@ -177,7 +197,7 @@ function createColumns(forceVisibility) {
 
   const lightboxElement = options.canvas ? createCanvasBackdrop(...rectangles) : createTable(...rectangles);
 
-  bindClickEventListener(lightboxElement, options.click)
+  bindClickEventListener(lightboxElement, options.click, rectangles)
 
   $columnWrapper.append(lightboxElement);
 
