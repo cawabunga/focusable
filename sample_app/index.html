@@ -10,6 +10,13 @@
 
   <script src="demo.js"></script>
   <style>
+
+    /* Make focused element clickable, so it overlaps the backdrop */
+    .focused {
+      position: relative;
+      z-index: 9999;
+    }
+
     body{
       text-align: center;
       padding: 30px;
@@ -45,6 +52,7 @@
     input{
       text-align: center;
     }
+
   </style>
 </head>
 <body>

@@ -128,7 +128,8 @@ var options = {
   padding: 5,
   click: $.noop,
   canvas: false,
-  multiple: false
+  multiple: false,
+  activeElementClasses: 'focused'
 };
 
 $(document).ready(setup);
@@ -224,6 +225,7 @@ function setFocus($el, userOptions) {
     createCircle();
   }
 
+  $element.addClass(options.activeElementClasses);
   $columnWrapper.find(containerSelector).fadeIn(options.fadeDuration);
 };
 
@@ -234,6 +236,7 @@ function clearColumns() {
 function hide() {
   var instant = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
+  $element.removeClass(options.activeElementClasses);
   isVisible = false;
   $element = null;
 

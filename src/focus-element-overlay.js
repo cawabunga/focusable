@@ -42,6 +42,7 @@ let options = {
   click: $.noop,
   canvas: false,
   multiple: false,
+  activeElementClasses: 'focused',
 };
 
 $(document).ready(setup);
@@ -137,6 +138,7 @@ function setFocus($el, userOptions) {
     createCircle();
   }
 
+  $element.addClass(options.activeElementClasses);
   $columnWrapper.find(containerSelector).fadeIn(options.fadeDuration);
 };
 
@@ -145,6 +147,7 @@ function clearColumns() {
 }
 
 function hide(instant = false) {
+  $element.removeClass(options.activeElementClasses);
   isVisible = false;
   $element = null;
 
