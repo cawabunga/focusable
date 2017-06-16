@@ -212,6 +212,10 @@ function bindClickEventListener(lightboxElement, handler, rectangles) {
 }
 
 function setFocus($el, userOptions) {
+  if ($element) {
+    hide(true);
+  }
+
   options = $.extend(options, userOptions);
   $element = $el;
   createColumns();
@@ -228,9 +232,13 @@ function clearColumns() {
 }
 
 function hide() {
+  var instant = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
   isVisible = false;
   $element = null;
-  $columnWrapper.find(containerSelector).fadeOut(options.fadeDuration, clearColumns);
+
+  var fadeDuration = instant ? 0 : options.fadeDuration;
+  $columnWrapper.find(containerSelector).fadeOut(fadeDuration, clearColumns);
 }
 
 function getSingleRectangle(elements) {
