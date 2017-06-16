@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   background: transparent;
-  z-index: 2147482642;
+  z-index: 9998;
 }
 .lightbox-highlight--fixed {
   position: fixed;
@@ -19,7 +19,6 @@
 }
 .lightbox-cell {
   flex-grow: 1;
-  pointer-events: auto;
   height: inherit;
 }
  .lightbox-row.lightbox-opening-row .lightbox-cell {
