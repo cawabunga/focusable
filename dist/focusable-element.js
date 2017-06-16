@@ -278,6 +278,32 @@ function getRectangles(elements) {
   });
 }
 
+function addPadding(rectangular) {
+  var left = rectangular.left - options.padding;
+  var right = rectangular.right + options.padding;
+  var top = rectangular.top - options.padding;
+  var bottom = rectangular.bottom + options.padding;
+  var width = rectangular.width + 2 * options.padding;
+  var height = rectangular.height + 2 * options.padding;
+
+  return { left: left, right: right, top: top, bottom: bottom, width: width, height: height };
+}
+
+function addPageOffset(isFixed) {
+  var scrollDimensions = getScrollDimensions();
+
+  return function (rectangular) {
+    var left = rectangular.left + scrollDimensions.width;
+    var right = rectangular.right + scrollDimensions.width;
+    var top = rectangular.top + scrollDimensions.height;
+    var bottom = rectangular.bottom + scrollDimensions.height;
+    var width = rectangular.width;
+    var height = rectangular.height;
+
+    return { left: left, right: right, top: top, bottom: bottom, width: width, height: height };
+  };
+}
+
 function createColumns(forceVisibility) {
   if (!$element) {
     return;
@@ -286,6 +312,8 @@ function createColumns(forceVisibility) {
   isVisible = true;
   clearColumns();
 
+  var isFixed = isElementFixed($element);
+
   var rectangles = void 0;
   if (options.multiple) {
     rectangles = getRectangles($element.toArray());
@@ -293,7 +321,9 @@ function createColumns(forceVisibility) {
     rectangles = [getSingleRectangle($element.toArray())];
   }
 
-  var lightboxElement = options.canvas ? createCanvasBackdrop.apply(undefined, _toConsumableArray(rectangles)) : createTable.apply(undefined, _toConsumableArray(rectangles));
+  rectangles = rectangles.map(addPadding).map(addPageOffset(isFixed));
+
+  var lightboxElement = options.canvas ? createCanvasBackdrop(isFixed, rectangles) : createTable(isFixed, rectangles);
 
   bindClickEventListener(lightboxElement, options.click, rectangles);
 
@@ -337,10 +367,11 @@ function isElementFixed(element) {
   return isFixed;
 }
 
-function createTable(rectangle) {
+function createTable(isFixed, rectangles) {
+  var rectangle = rectangles[0];
+
   var pageDimensions = getPageDimensions();
   var windowDimensions = getWindowDimensions();
-  var scrollDimensions = getScrollDimensions();
 
   var container = $(template);
 
@@ -351,23 +382,15 @@ function createTable(rectangle) {
   var firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
   var middleColumn = middleBlock.find('.lightbox-opening');
 
-  if (isElementFixed($element)) {
-    var topBlockHeight = Math.max(0, rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
+  var viewportDimensions = isFixed ? windowDimensions : pageDimensions;
 
-    var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
-  } else {
-    var topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
+  var topBlockHeight = Math.max(0, rectangle.top);
+  var middleBlockHeight = rectangle.height;
+  var bottomBlockHeight = Math.max(0, viewportDimensions.height - topBlockHeight - middleBlockHeight);
 
-    var firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
-  }
+  var firstColumnWidth = Math.max(0, rectangle.left);
+  var middleColumnWidth = rectangle.width;
+  var lastColumnnWidth = Math.max(0, viewportDimensions.width - firstColumnWidth - middleColumnWidth);
 
   topBlock.height(topBlockHeight);
   middleBlock.height(middleBlockHeight);
@@ -376,7 +399,7 @@ function createTable(rectangle) {
   firstColumn.width(firstColumnWidth);
   middleColumn.width(middleColumnWidth);
 
-  if (isElementFixed($element)) container.css('position', 'fixed');
+  if (isFixed) container.css('position', 'fixed');
   if (topBlockHeight === 0) container.css('top', -options.padding);
   if (bottomBlockHeight === 0) container.css('bottom', -options.padding);
   if (firstColumnWidth === 0) container.css('left', -options.padding);
@@ -385,12 +408,9 @@ function createTable(rectangle) {
   return container;
 }
 
-function createCanvasBackdrop() {
+function createCanvasBackdrop(isFixed, rectangles) {
   var pageDimensions = getPageDimensions();
   var windowDimensions = getWindowDimensions();
-  var scrollDimensions = getScrollDimensions();
-
-  var isFixed = isElementFixed($element);
 
   var canvas = document.createElement('canvas');
   canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
@@ -411,29 +431,9 @@ function createCanvasBackdrop() {
   canvas.height = canvasHeight;
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  for (var _len = arguments.length, rectangles = Array(_len), _key = 0; _key < _len; _key++) {
-    rectangles[_key] = arguments[_key];
-  }
-
-  if (isFixed) {
-    rectangles.forEach(function (rectangle) {
-      var left = rectangle.left - options.padding;
-      var top = rectangle.top - options.padding;
-      var width = rectangle.width + options.padding * 2;
-      var height = rectangle.height + options.padding * 2;
-
-      context.clearRect(left, top, width, height);
-    });
-  } else {
-    rectangles.forEach(function (rectangle) {
-      var left = scrollDimensions.width + rectangle.left - options.padding;
-      var top = scrollDimensions.height + rectangle.top - options.padding;
-      var width = rectangle.width + options.padding * 2;
-      var height = rectangle.height + options.padding * 2;
-
-      context.clearRect(left, top, width, height);
-    });
-  }
+  rectangles.forEach(function (rectangle) {
+    context.clearRect(rectangle.left, rectangle.top, rectangle.width, rectangle.height);
+  });
 
   return $(canvas);
 }

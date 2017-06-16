@@ -189,6 +189,32 @@ function getRectangles(elements) {
   });
 }
 
+function addPadding(rectangular) {
+  const left   = rectangular.left - options.padding;
+  const right  = rectangular.right + options.padding;
+  const top    = rectangular.top - options.padding;
+  const bottom = rectangular.bottom + options.padding;
+  const width  = rectangular.width + 2 * options.padding;
+  const height = rectangular.height + 2 * options.padding;
+
+  return { left, right, top, bottom, width, height };
+}
+
+function addPageOffset(isFixed) {
+  const scrollDimensions = getScrollDimensions();
+
+  return function (rectangular) {
+    const left   = rectangular.left + scrollDimensions.width;
+    const right  = rectangular.right + scrollDimensions.width;
+    const top    = rectangular.top + scrollDimensions.height;
+    const bottom = rectangular.bottom + scrollDimensions.height;
+    const width  = rectangular.width;
+    const height = rectangular.height;
+
+    return { left, right, top, bottom, width, height };
+  };
+}
+
 function createColumns(forceVisibility) {
   if (!$element) {
     return;
@@ -197,6 +223,8 @@ function createColumns(forceVisibility) {
   isVisible = true;
   clearColumns();
 
+  const isFixed = isElementFixed($element);
+
   let rectangles;
   if (options.multiple) {
     rectangles = getRectangles($element.toArray());
@@ -204,7 +232,9 @@ function createColumns(forceVisibility) {
     rectangles = [getSingleRectangle($element.toArray())];
   }
 
-  const lightboxElement = options.canvas ? createCanvasBackdrop(...rectangles) : createTable(...rectangles);
+  rectangles = rectangles.map(addPadding).map(addPageOffset(isFixed));
+
+  const lightboxElement = options.canvas ? createCanvasBackdrop(isFixed, rectangles) : createTable(isFixed, rectangles);
 
   bindClickEventListener(lightboxElement, options.click, rectangles)
 
@@ -248,10 +278,11 @@ function isElementFixed(element) {
   return isFixed;
 }
 
-function createTable(rectangle) {
+function createTable(isFixed, rectangles) {
+  const rectangle = rectangles[0];
+
   const pageDimensions = getPageDimensions();
   const windowDimensions = getWindowDimensions();
-  const scrollDimensions = getScrollDimensions();
 
   const container = $(template);
 
@@ -262,24 +293,15 @@ function createTable(rectangle) {
   const firstColumn = middleBlock.find('.lightbox-cell:nth-of-type(1)');
   const middleColumn = middleBlock.find('.lightbox-opening');
 
-  if (isElementFixed($element)) {
-    var topBlockHeight = Math.max(0, rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, windowDimensions.height - topBlockHeight - middleBlockHeight);
+  const viewportDimensions = isFixed ? windowDimensions : pageDimensions;
 
-    var firstColumnWidth = Math.max(0, rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, windowDimensions.width - firstColumnWidth - middleColumnWidth);
+  const topBlockHeight = Math.max(0, rectangle.top);
+  const middleBlockHeight = rectangle.height;
+  const bottomBlockHeight = Math.max(0, viewportDimensions.height - topBlockHeight - middleBlockHeight);
 
-  } else {
-    var topBlockHeight = Math.max(0, scrollDimensions.height + rectangle.top - options.padding);
-    var middleBlockHeight = rectangle.height + 2 * options.padding;
-    var bottomBlockHeight = Math.max(0, pageDimensions.height - topBlockHeight - middleBlockHeight);
-
-    var firstColumnWidth = Math.max(0, scrollDimensions.width + rectangle.left - options.padding);
-    var middleColumnWidth = rectangle.width + 2 * options.padding;
-    var lastColumnnWidth = Math.max(0, pageDimensions.width - firstColumnWidth - middleColumnWidth);
-  }
+  const firstColumnWidth = Math.max(0, rectangle.left);
+  const middleColumnWidth = rectangle.width;
+  const lastColumnnWidth = Math.max(0, viewportDimensions.width - firstColumnWidth - middleColumnWidth);
 
   topBlock.height(topBlockHeight);
   middleBlock.height(middleBlockHeight);
@@ -288,7 +310,7 @@ function createTable(rectangle) {
   firstColumn.width(firstColumnWidth);
   middleColumn.width(middleColumnWidth);
 
-  if (isElementFixed($element)) container.css('position', 'fixed');
+  if (isFixed)                  container.css('position', 'fixed');
   if (topBlockHeight === 0)     container.css('top', -options.padding);
   if (bottomBlockHeight === 0)  container.css('bottom', -options.padding);
   if (firstColumnWidth === 0)   container.css('left', -options.padding);
@@ -297,12 +319,9 @@ function createTable(rectangle) {
   return container;
 }
 
-function createCanvasBackdrop(...rectangles) {
+function createCanvasBackdrop(isFixed, rectangles) {
   const pageDimensions = getPageDimensions();
   const windowDimensions = getWindowDimensions();
-  const scrollDimensions = getScrollDimensions();
-
-  const isFixed = isElementFixed($element);
 
   const canvas = document.createElement('canvas');
   canvas.classList.add('lightbox-highlight', 'lightbox-highlight--canvas');
@@ -323,26 +342,9 @@ function createCanvasBackdrop(...rectangles) {
   canvas.height = canvasHeight;
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  if (isFixed) {
-    rectangles.forEach(rectangle => {
-      const left = rectangle.left - options.padding;
-      const top = rectangle.top - options.padding;
-      const width = rectangle.width + options.padding * 2;
-      const height = rectangle.height + options.padding * 2;
-
-      context.clearRect(left, top, width, height);
-    });
-
-  } else {
-    rectangles.forEach(rectangle => {
-      const left = scrollDimensions.width + rectangle.left - options.padding;
-      const top = scrollDimensions.height + rectangle.top - options.padding;
-      const width = rectangle.width + options.padding * 2;
-      const height = rectangle.height + options.padding * 2;
-
-      context.clearRect(left, top, width, height);
-    });
-  }
+  rectangles.forEach(rectangle => {
+    context.clearRect(rectangle.left, rectangle.top, rectangle.width, rectangle.height);
+  });
 
   return $(canvas);
 }
