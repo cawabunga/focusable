@@ -26,7 +26,8 @@
       click: function () {
         console.log('backdrop clicked');
       },
-      canvas: true,
+      canvas: $('#option-canvas').is(':checked'),
+      multiple: $('#option-multiple').is(':checked'),
     };
   }
 })();
