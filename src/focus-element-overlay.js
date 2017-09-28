@@ -204,10 +204,10 @@ function addPageOffset(isFixed) {
   const scrollDimensions = getScrollDimensions();
 
   return function (rectangular) {
-    const left   = rectangular.left + scrollDimensions.width;
-    const right  = rectangular.right + scrollDimensions.width;
-    const top    = rectangular.top + scrollDimensions.height;
-    const bottom = rectangular.bottom + scrollDimensions.height;
+    const left   = rectangular.left + (isFixed ? 0 : scrollDimensions.width);
+    const right  = rectangular.right + (isFixed ? 0 : scrollDimensions.width);
+    const top    = rectangular.top + (isFixed ? 0 : scrollDimensions.height);
+    const bottom = rectangular.bottom + (isFixed ? 0 : scrollDimensions.height);
     const width  = rectangular.width;
     const height = rectangular.height;
 

@@ -293,10 +293,10 @@ function addPageOffset(isFixed) {
   var scrollDimensions = getScrollDimensions();
 
   return function (rectangular) {
-    var left = rectangular.left + scrollDimensions.width;
-    var right = rectangular.right + scrollDimensions.width;
-    var top = rectangular.top + scrollDimensions.height;
-    var bottom = rectangular.bottom + scrollDimensions.height;
+    var left = rectangular.left + (isFixed ? 0 : scrollDimensions.width);
+    var right = rectangular.right + (isFixed ? 0 : scrollDimensions.width);
+    var top = rectangular.top + (isFixed ? 0 : scrollDimensions.height);
+    var bottom = rectangular.bottom + (isFixed ? 0 : scrollDimensions.height);
     var width = rectangular.width;
     var height = rectangular.height;
 
