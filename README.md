@@ -1,3 +1,6 @@
+The fork isn't maintained anymore, but I suggest to check out another library [layer-mask](https://github.com/cawabunga/layer-mask) It has the similar functionality, but different implementation and it is more flexible.
+=============
+
 Focusable [![Build Status](https://travis-ci.org/cawabunga/focusable.svg?branch=master)](https://travis-ci.org/cawabunga/focusable) [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
 =============
 
